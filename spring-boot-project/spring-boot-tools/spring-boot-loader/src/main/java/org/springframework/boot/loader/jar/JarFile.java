@@ -430,10 +430,13 @@ public class JarFile extends AbstractJarFile implements Iterable<java.util.jar.J
 	 * {@link URLStreamHandler} will be located to deal with jar URLs.
 	 */
 	public static void registerUrlProtocolHandler() {
+		// 获得URLStreamHandler的路径
 		Handler.captureJarContextUrl();
+		// 将spring Boot定义的HANDLERS_PACKAGE(org.springframework.boot.loader)补充上去
 		String handlers = System.getProperty(PROTOCOL_HANDLER, "");
 		System.setProperty(PROTOCOL_HANDLER,
 				((handlers == null || handlers.isEmpty()) ? HANDLERS_PACKAGE : handlers + "|" + HANDLERS_PACKAGE));
+		// 重置已缓存的URLStreamHandler处理器们
 		resetCachedUrlHandlers();
 	}
 

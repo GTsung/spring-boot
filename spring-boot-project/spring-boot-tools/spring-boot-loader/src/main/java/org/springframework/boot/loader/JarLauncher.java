@@ -34,8 +34,10 @@ public class JarLauncher extends ExecutableArchiveLauncher {
 
 	static final EntryFilter NESTED_ARCHIVE_ENTRY_FILTER = (entry) -> {
 		if (entry.isDirectory()) {
+			// 项目的class文件
 			return entry.getName().equals("BOOT-INF/classes/");
 		}
+		// 项目需要加载的jar包
 		return entry.getName().startsWith("BOOT-INF/lib/");
 	};
 
@@ -58,10 +60,12 @@ public class JarLauncher extends ExecutableArchiveLauncher {
 
 	@Override
 	protected String getArchiveEntryPathPrefix() {
+		// 项目class文件及依赖的jar包路径
 		return "BOOT-INF/";
 	}
 
 	public static void main(String[] args) throws Exception {
+		// 创建JarLauncher并调用方法
 		new JarLauncher().launch(args);
 	}
 
