@@ -313,24 +313,35 @@ public class SpringApplication {
 		long startTime = System.nanoTime();
 		DefaultBootstrapContext bootstrapContext = createBootstrapContext();
 		ConfigurableApplicationContext context = null;
+		// 配置headless属性
 		configureHeadlessProperty();
+		// 获得SpringApplicationRunListener的数组，并启动监听
 		SpringApplicationRunListeners listeners = getRunListeners(args);
 		listeners.starting(bootstrapContext, this.mainApplicationClass);
 		try {
+			// 创建ApplicationArguments对象
 			ApplicationArguments applicationArguments = new DefaultApplicationArguments(args);
+			// 准备环境
 			ConfigurableEnvironment environment = prepareEnvironment(listeners, bootstrapContext, applicationArguments);
 			configureIgnoreBeanInfo(environment);
+			// 打印banner
 			Banner printedBanner = printBanner(environment);
+			// 创建spring容器
 			context = createApplicationContext();
 			context.setApplicationStartup(this.applicationStartup);
+			// 调用初始化类的initialize方法
 			prepareContext(bootstrapContext, context, environment, listeners, applicationArguments, printedBanner);
+			// 创建容器
 			refreshContext(context);
+			// 初始化容器的后置逻辑
 			afterRefresh(context, applicationArguments);
 			Duration timeTakenToStartup = Duration.ofNanos(System.nanoTime() - startTime);
 			if (this.logStartupInfo) {
 				new StartupInfoLogger(this.mainApplicationClass).logStarted(getApplicationLog(), timeTakenToStartup);
 			}
+			// 通知spring容器完成
 			listeners.started(context, timeTakenToStartup);
+			// 调用ApplicationRunner与CommandLineRunner
 			callRunners(context, applicationArguments);
 		}
 		catch (Throwable ex) {
@@ -388,7 +399,9 @@ public class SpringApplication {
 			ConfigurableEnvironment environment, SpringApplicationRunListeners listeners,
 			ApplicationArguments applicationArguments, Banner printedBanner) {
 		context.setEnvironment(environment);
+		// 设置容器的属性
 		postProcessApplicationContext(context);
+		// ApplicationContextInitializer的initialize方法
 		applyInitializers(context);
 		listeners.contextPrepared(context);
 		bootstrapContext.close(context);
@@ -768,6 +781,7 @@ public class SpringApplication {
 		List<Object> runners = new ArrayList<>();
 		runners.addAll(context.getBeansOfType(ApplicationRunner.class).values());
 		runners.addAll(context.getBeansOfType(CommandLineRunner.class).values());
+		// 排序@Order
 		AnnotationAwareOrderComparator.sort(runners);
 		for (Object runner : new LinkedHashSet<>(runners)) {
 			if (runner instanceof ApplicationRunner) {
