@@ -80,6 +80,7 @@ import org.springframework.core.io.support.SpringFactoriesLoader;
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 @Inherited
+// AutoConfigurationPackage注解主要功能是自动配置包，会获取主程序类所在的包路径，并将包路径下的所有组件注册到容器
 @AutoConfigurationPackage
 @Import(AutoConfigurationImportSelector.class)
 public @interface EnableAutoConfiguration {
